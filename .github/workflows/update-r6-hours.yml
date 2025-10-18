@@ -2,12 +2,13 @@ name: Update R6 Siege Hours
 
 on:
   schedule:
-    - cron: '0 6 * * *'   # corre todos los días a las 06:00 UTC
+    - cron: '0 6 * * *'   # Corre todos los días a las 06:00 UTC
   workflow_dispatch:
 
 jobs:
   update-hours:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v5
@@ -19,21 +20,28 @@ jobs:
         run: |
           set -e
           APPID=359550
+
+          # Llamada a Steam API para obtener minutos jugados
           RESP=$(curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_API_KEY}&steamid=${STEAM_ID}&include_appinfo=false&include_played_free_games=true&appids_filter[0]=${APPID}")
+
+          # Extraer minutos jugados (o 0 si no hay resultado)
           MINUTES=$(echo "$RESP" | jq -r '.response.games[0].playtime_forever // 0')
+
+          # Calcular horas redondeadas
           HOURS=$(python3 - <<PY
-import math; print(round(int($MINUTES)/60))
+import math
+print(round(int($MINUTES)/60))
 PY
 )
-          DATE=$(date -u +%F)
 
+          DATE=$(date -u +%F)
           echo "Horas jugadas: $HOURS"
           echo "Última actualización: $DATE"
 
-          # Actualizar o crear r6_stats.json
+          # Crear o actualizar el archivo JSON
           echo "{\"hours\": $HOURS, \"last_updated\": \"$DATE\"}" > r6_stats.json
 
-          # Actualizar sección del README.md
+          # Actualizar la sección del README
           if grep -q "## 🎮 Horas jugadas — Rainbow Six Siege" README.md; then
             awk -v h="$HOURS" -v d="$DATE" '
               /## 🎮 Horas jugadas — Rainbow Six Siege/ {print; getline; getline; print "**Total:** " h " horas  "; print "*Última actualización:* " d; next}
@@ -51,3 +59,4 @@ PY
           file_pattern: |
             README.md
             r6_stats.json
+
