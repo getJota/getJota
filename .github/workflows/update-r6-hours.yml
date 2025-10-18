@@ -52,7 +52,6 @@ jobs:
           # Actualizar README usando Perl
           perl -i -pe "s|<span id=\"r6-hours\">.*?</span>|<span id=\"r6-hours\">\`$HOURS\` horas</span>|g; s|<span id=\"r6-last\">.*?</span>|<span id=\"r6-last\">\`$DATE\`</span>|g" README.md
 
-          ' README.md > README.tmp && mv README.tmp README.md
           echo "✅ README actualizado."
 
       - name: Commit and push changes
