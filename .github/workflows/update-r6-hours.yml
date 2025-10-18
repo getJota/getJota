@@ -1,3 +1,21 @@
+name: Update R6 Siege Hours
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # Corre todos los días a las 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-hours:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Fetch playtime from Steam and update README
         env:
           STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
@@ -36,3 +54,12 @@
           sed -i -E "s|<span id=\"r6-last\">.*</span>|<span id=\"r6-last\">\`$DATE\`</span>|" README.md
 
           echo "✅ README actualizado."
+
+      - name: Commit and push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          branch: main
+          message: "ci: actualizar horas de juego Rainbow Six Siege"
+          file_pattern: |
+            README.md
+            r6_stats.json
