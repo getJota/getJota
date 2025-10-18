@@ -1,23 +1,37 @@
-name: Actualizar Horas de Steam
-
+name: Update R6 playtime in README
 on:
   schedule:
-    - cron: '0 */8 * * *'
+    - cron: '0 3 * * *'   # corre daily a las 03:00 UTC (ajustá si querés)
   workflow_dispatch:
 
 jobs:
-  update-steam-hours:
-    name: Actualizar Horas de R6
+  update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Actualizar horas jugadas
-        uses: korewa-kore/github-steam-HoursPlayed@v1.1.0
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
-          STEAM_USER_ID: ${{ secrets.STEAM_ID }} # Usamos el secret que ya creaste
-          APP_ID: 359550
-          Comment_start: ''
+          python-version: '3.11'
+
+      - name: Install deps
+        run: python -m pip install requests
+
+      - name: Update README with Steam playtime
+        env:
+          STEAM_KEY: ${{ secrets.STEAM_API_KEY }}
+          STEAM_ID: ${{ secrets.STEAM_ID }}
+        run: |
+          python scripts/update_r6_playtime.py
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update R6 playtime in README"
+          file_pattern: "README.md"
+          branch: ${{ github.ref_name }}
+
           Comment_end: ''
           Show_Time: 'True'
