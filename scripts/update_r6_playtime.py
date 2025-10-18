@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os, requests, re, sys
 
-STEAM_KEY = os.environ.get("STEAM_KEY")
+STEAM_KEY = os.environ.get("STEAM_API_KEY")
 STEAM_ID = os.environ.get("STEAM_ID")
 APPID = 359550  # Rainbow Six Siege
 
