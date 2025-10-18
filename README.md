@@ -9,4 +9,4 @@
 </p>
 
 ### 🎮 Mis Horas en Rainbow Six Siege
-¡Mis horas de juego aparecerán aquí pronto!
+Aquí se actualizarán mis horas de juego.
