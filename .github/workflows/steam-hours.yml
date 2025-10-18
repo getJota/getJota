@@ -1,0 +1,21 @@
+name: Actualizar Horas de Steam
+
+on:
+  # Esto hace que se ejecute automáticamente cada 6 horas
+  schedule:
+    - cron: '0 */6 * * *'
+  # Esto te permite ejecutarlo manualmente cuando quieras
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    name: Actualizar README con Horas de Steam
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: YouEclipse/steam-box@master
+        with:
+          steam_api_key: ${{ secrets.STEAM_API_KEY }}
+          steam_id: ${{ secrets.STEAM_ID }}
+          app_id: 359550
+          readme_file: "README.md"
