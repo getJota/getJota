@@ -10,13 +10,14 @@
 
 ## 🎮 Horas jugadas — Rainbow Six Siege
 
-![R6 Horas](https://img.shields.io/badge/dynamic/json?label=R6%20Horas&url=https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/r6_stats.json&query=$.hours&suffix=%20h&color=blue&style=flat-square)
+![R6 Horas](https://img.shields.io/badge/dynamic/json?label=R6%20Horas&url=https://raw.githubusercontent.com/getJota/getJota/main/r6_stats.json&query=$.hours&suffix=%20h&color=blue&style=flat-square)
 
 **Total (aprox):** <span id="r6-hours">`--` horas</span>  
 
 _Last updated: <span id="r6-last">`--`</span>._
 
 > Nota: el badge dinámico se alimenta del archivo `r6_stats.json` que actualiza la GitHub Action.
+
 
 
 
