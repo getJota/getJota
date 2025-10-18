@@ -8,5 +8,6 @@
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
 </p>
 
-Horas jugadas en Rainbow Six Siege: **<!-- R6_PLAYTIME -->**
+🎮 Rainbow Six Siege: <!-- R6_PLAYTIME -->
+
 
