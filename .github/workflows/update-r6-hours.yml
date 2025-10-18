@@ -50,7 +50,8 @@ jobs:
           cat r6_stats.json
 
           # Actualizar README usando Perl
-          perl -i -pe "s|<span id=\"r6-hours\">.*?</span>|<span id=\"r6-hours\">\`$HOURS\` horas</span>|g; s|<span id=\"r6-last\">.*?</span>|<span id=\"r6-last\">\`$DATE\`</span>|g" README.md
+          perl -i -pe 's|<span id="r6-hours">.*?</span>|<span id="r6-hours">`'"$HOURS"'` horas</span>|g;
+          s|<span id="r6-last">.*?</span>|<span id="r6-last">`'"$DATE"'`</span>|g' README.md
 
           echo "✅ README actualizado."
 
