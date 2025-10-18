@@ -21,7 +21,7 @@ jobs:
 
       - name: Update README with Steam playtime
         env:
-          STEAM_KEY: ${{ secrets.STEAM_API_KEY }}
+          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
           STEAM_ID: ${{ secrets.STEAM_ID }}
         run: |
           python scripts/update_r6_playtime.py
