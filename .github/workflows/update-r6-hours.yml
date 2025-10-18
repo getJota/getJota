@@ -21,20 +21,16 @@ jobs:
           STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
           STEAM_ID: ${{ secrets.STEAM_ID }}
         run: |
-          set -euo pipefail
           APPID=359550
 
           echo "📡 Consultando API de Steam..."
           URL="https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_API_KEY}&steamid=${STEAM_ID}&include_appinfo=false&include_played_free_games=true&appids_filter[0]=${APPID}"
           RESP=$(curl -s "$URL")
           echo "✅ Respuesta de la API:"
-          echo "$RESP" | jq .
+          echo "$RESP" | jq . || true   # Nunca falla
 
-          MINUTES=$(echo "$RESP" | jq -r '.response.games[0].playtime_forever // 0')
-          if ! echo "$MINUTES" | grep -Eq '^[0-9]+$'; then
-            echo "⚠️ No se encontraron minutos válidos, usando 0."
-            MINUTES=0
-          fi
+          # Extraer minutos, usar 0 si falla
+          MINUTES=$(echo "$RESP" | jq -r '.response.games[0].playtime_forever // 0' 2>/dev/null || echo 0)
 
           HOURS=$(( (MINUTES + 30) / 60 ))
           DATE=$(date -u +%F)
@@ -43,17 +39,17 @@ jobs:
           echo "🕒 Horas (redondeadas): $HOURS"
           echo "📅 Fecha: $DATE"
 
-          # Crear el JSON de estadísticas
+          # Crear JSON
           printf '{ "hours": %d, "minutes": %d, "last_updated": "%s" }\n' "$HOURS" "$MINUTES" "$DATE" > r6_stats.json
           echo "✅ Archivo r6_stats.json generado:"
           cat r6_stats.json
 
-          # Asegurarse de que las etiquetas existen en README
+          # Crear etiquetas si no existen
           if ! grep -q '<span id="r6-hours">' README.md; then
             echo -e "\n**Total (aprox):** <span id=\"r6-hours\">`--` horas</span>\n_Last updated: <span id=\"r6-last\">`--`</span>._\n" >> README.md
           fi
 
-          # Actualizar README usando Perl
+          # Actualizar README
           perl -i -pe 's|<span id="r6-hours">.*?</span>|<span id="r6-hours">`'"$HOURS"'` horas</span>|g;
                        s|<span id="r6-last">.*?</span>|<span id="r6-last">`'"$DATE"'`</span>|g' README.md
 
@@ -66,8 +62,8 @@ jobs:
           # Commit y push solo si hay cambios
           git add README.md r6_stats.json
           if ! git diff --cached --quiet; then
-            git commit -m "chore: actualizar horas de R6 Siege"
-            git push origin main
+            git commit -m "chore: actualizar horas de R6 Siege" || true
+            git push origin main || true
           else
             echo "No hay cambios para commitear."
           fi
