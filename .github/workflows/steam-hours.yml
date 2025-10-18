@@ -2,18 +2,20 @@ name: Actualizar Horas de Steam
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    # Se ejecuta cada 8 horas
+    - cron: '0 */8 * * *'
   workflow_dispatch:
 
 jobs:
-  update-readme:
-    name: Actualizar README con Horas de Steam
+  update_readme:
+    name: Actualizar horas de juego
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: YouEclipse/steam-box@master # <- AQUÍ ES
+      - uses: actions/checkout@v2
+      - uses: gautamkrishnar/blog-post-workflow@v1
         with:
-          steam_api_key: ${{ secrets.STEAM_API_KEY }}
+          comment_tag_name: "STEAM_PLAYTIME"
+          steam_key: ${{ secrets.STEAM_API_KEY }}
           steam_id: ${{ secrets.STEAM_ID }}
           app_id: 359550
-          readme_file: "README.md"
+          max_lines: 5
