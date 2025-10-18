@@ -59,9 +59,15 @@ jobs:
 
           echo "✅ README actualizado."
 
-          # Commit y push
+          # Configurar git
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Commit y push solo si hay cambios
           git add README.md r6_stats.json
-          git commit -m "chore: actualizar horas de R6 Siege"
-          git push origin main
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: actualizar horas de R6 Siege"
+            git push origin main
+          else
+            echo "No hay cambios para commitear."
+          fi
