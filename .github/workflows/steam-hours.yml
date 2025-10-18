@@ -2,20 +2,22 @@ name: Actualizar Horas de Steam
 
 on:
   schedule:
-    # Se ejecuta cada 8 horas
     - cron: '0 */8 * * *'
   workflow_dispatch:
 
 jobs:
-  update_readme:
-    name: Actualizar horas de juego
+  update-steam-hours:
+    name: Actualizar Horas de R6
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: gautamkrishnar/blog-post-workflow@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Actualizar horas jugadas
+        uses: korewa-kore/github-steam-HoursPlayed@v1.1.0
         with:
-          comment_tag_name: "STEAM_PLAYTIME"
-          steam_key: ${{ secrets.STEAM_API_KEY }}
-          steam_id: ${{ secrets.STEAM_ID }}
-          app_id: 359550
-          max_lines: 5
+          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+          STEAM_USER_ID: ${{ secrets.STEAM_ID }} # Usamos el secret que ya creaste
+          APP_ID: 359550
+          Comment_start: ''
+          Comment_end: ''
+          Show_Time: 'True'
