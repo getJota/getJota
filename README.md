@@ -7,3 +7,6 @@
   <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java">
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
 </p>
+
+### 🎮 Mis Horas en Rainbow Six Siege
+¡Mis horas de juego aparecerán aquí pronto!
