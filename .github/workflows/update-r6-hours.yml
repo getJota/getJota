@@ -1,21 +1,3 @@
-name: Update R6 Siege Hours
-
-on:
-  schedule:
-    - cron: '0 6 * * *'   # Corre todos los días a las 06:00 UTC
-  workflow_dispatch:
-
-jobs:
-  update-hours:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v5
-
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
       - name: Fetch playtime from Steam and update README
         env:
           STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
@@ -24,4 +6,33 @@ jobs:
           set -euo pipefail
           APPID=359550
 
-          # Llamada
+          echo "📡 Consultando API de Steam..."
+          URL="https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_API_KEY}&steamid=${STEAM_ID}&include_appinfo=false&include_played_free_games=true&appids_filter[0]=${APPID}"
+          RESP=$(curl -s "$URL")
+          echo "✅ Respuesta de la API:"
+          echo "$RESP" | jq .
+
+          MINUTES=$(echo "$RESP" | jq -r '.response.games[0].playtime_forever // 0')
+
+          if ! echo "$MINUTES" | grep -Eq '^[0-9]+$'; then
+            echo "⚠️ No se encontraron minutos válidos, usando 0."
+            MINUTES=0
+          fi
+
+          HOURS=$(( (MINUTES + 30) / 60 ))
+          DATE=$(date -u +%F)
+
+          echo "⏱️ Minutos totales: $MINUTES"
+          echo "🕒 Horas (redondeadas): $HOURS"
+          echo "📅 Fecha: $DATE"
+
+          # Crear el JSON de estadísticas
+          printf '{ "hours": %d, "minutes": %d, "last_updated": "%s" }\n' "$HOURS" "$MINUTES" "$DATE" > r6_stats.json
+          echo "✅ Archivo r6_stats.json generado:"
+          cat r6_stats.json
+
+          # Actualizar el README: reemplaza los valores dentro de las etiquetas <span>
+          sed -i -E "s|<span id=\"r6-hours\">.*</span>|<span id=\"r6-hours\">\`$HOURS\` horas</span>|" README.md
+          sed -i -E "s|<span id=\"r6-last\">.*</span>|<span id=\"r6-last\">\`$DATE\`</span>|" README.md
+
+          echo "✅ README actualizado."
