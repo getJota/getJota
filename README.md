@@ -8,5 +8,5 @@
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
 </p>
 
-### 🎮 Mis Horas en Rainbow Six Siege
-Aquí se actualizarán mis horas de juego.
+Horas jugadas en Rainbow Six Siege: **<!-- R6_PLAYTIME -->**
+
