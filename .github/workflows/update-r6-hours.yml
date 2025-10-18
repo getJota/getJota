@@ -1,0 +1,57 @@
+name: Update R6 Siege Hours
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # corre diariamente a las 06:00 UTC (cambiá si querés otra frecuencia)
+  workflow_dispatch:     # permite ejecución manual
+
+jobs:
+  update-hours:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Install jq (JSON tool)
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Fetch playtime from Steam
+        env:
+          STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+          STEAM_ID: ${{ secrets.STEAM_ID }}
+        run: |
+          set -e
+          APPID=359550
+          # Llamada a GetOwnedGames (devuelve minutes played)
+          RESP=$(curl -s "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${STEAM_API_KEY}&steamid=${STEAM_ID}&include_appinfo=false&include_played_free_games=true&appids_filter[0]=${APPID}")
+          # Sacar playtime en minutos (si no existe, queda 0)
+          MINUTES=$(echo "$RESP" | jq -r --argjson appid $APPID '.response.games[]? | select(.appid == ($appid|tonumber)) | .playtime_forever' 2>/dev/null || echo "0")
+          if [ -z "$MINUTES" ]; then MINUTES=0; fi
+          HOURS=$(python3 - <<PY
+import math,sys
+m=int($MINUTES)
+h=round(m/60)
+print(h)
+PY
+)
+          DATE=$(date -u +%F)
+          echo "Fetched minutes: $MINUTES -> hours: $HOURS"
+          # Crear carpeta si no existe
+          mkdir -p .github/r6
+          # Escribir JSON con horas y fecha
+          cat > r6_stats.json <<EOF
+{
+  "hours": $HOURS,
+  "minutes": $MINUTES,
+  "last_updated": "$DATE"
+}
+EOF
+
+      - name: Commit and push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          branch: ${{ github.ref_name || 'main' }}
+          message: "ci: actualizar horas R6 Siege (desde Action)"
+          file_pattern: |
+            r6_stats.json
+
