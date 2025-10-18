@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: YouEclipse/steam-box@main # <- AQUÍ ES
+      - uses: YouEclipse/steam-box@master # <- AQUÍ ES
         with:
           steam_api_key: ${{ secrets.STEAM_API_KEY }}
           steam_id: ${{ secrets.STEAM_ID }}
