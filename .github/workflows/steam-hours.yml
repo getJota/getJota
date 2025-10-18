@@ -1,10 +1,8 @@
 name: Actualizar Horas de Steam
 
 on:
-  # Esto hace que se ejecute automáticamente cada 6 horas
   schedule:
     - cron: '0 */6 * * *'
-  # Esto te permite ejecutarlo manualmente cuando quieras
   workflow_dispatch:
 
 jobs:
@@ -13,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: YouEclipse/steam-box@master
+      - uses: YouEclipse/steam-box@main # <- AQUÍ ES
         with:
           steam_api_key: ${{ secrets.STEAM_API_KEY }}
           steam_id: ${{ secrets.STEAM_ID }}
